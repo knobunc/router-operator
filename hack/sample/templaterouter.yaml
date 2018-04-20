@@ -1,0 +1,6 @@
+apiVersion: router.operations.openshift.io/v1alpha1
+kind: TemplateRouter
+metadata:
+  name: templaterouter-example
+spec:
+  foo: bar
