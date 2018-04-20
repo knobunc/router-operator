@@ -76,12 +76,56 @@ var (
 							Type: "object",
 						},
 						"spec": v1beta1.JSONSchemaProps{
-							Type:       "object",
-							Properties: map[string]v1beta1.JSONSchemaProps{},
+							Type: "object",
+							Properties: map[string]v1beta1.JSONSchemaProps{
+								"baseImage": v1beta1.JSONSchemaProps{
+									Type: "string",
+								},
+								"pod": v1beta1.JSONSchemaProps{
+									Type: "object",
+									Properties: map[string]v1beta1.JSONSchemaProps{
+										"resources": v1beta1.JSONSchemaProps{
+											Type: "object",
+											Properties: map[string]v1beta1.JSONSchemaProps{
+												"limits": v1beta1.JSONSchemaProps{
+													Type: "object",
+													AdditionalProperties: &v1beta1.JSONSchemaPropsOrBool{
+														Allows: true,
+														//Schema: &,
+													},
+												},
+												"requests": v1beta1.JSONSchemaProps{
+													Type: "object",
+													AdditionalProperties: &v1beta1.JSONSchemaPropsOrBool{
+														Allows: true,
+														//Schema: &,
+													},
+												},
+											},
+										},
+									},
+								},
+								"replicas": v1beta1.JSONSchemaProps{
+									Type:   "integer",
+									Format: "int32",
+								},
+								"version": v1beta1.JSONSchemaProps{
+									Type: "string",
+								},
+							},
 						},
 						"status": v1beta1.JSONSchemaProps{
-							Type:       "object",
-							Properties: map[string]v1beta1.JSONSchemaProps{},
+							Type: "object",
+							Properties: map[string]v1beta1.JSONSchemaProps{
+								"routers": v1beta1.JSONSchemaProps{
+									Type: "array",
+									Items: &v1beta1.JSONSchemaPropsOrArray{
+										Schema: &v1beta1.JSONSchemaProps{
+											Type: "string",
+										},
+									},
+								},
+							},
 						},
 					},
 				},
