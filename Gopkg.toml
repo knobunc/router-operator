@@ -21,7 +21,7 @@ required = ["github.com/kubernetes-sig-testing/frameworks/integration",
   go-tests = true
 
 [[constraint]]
-  version = "master"
+  version = "v1beta1.2"
   name = "github.com/kubernetes-sigs/kubebuilder"
 
 [[constraint]]
@@ -71,6 +71,10 @@ required = ["github.com/kubernetes-sig-testing/frameworks/integration",
 [[constraint]]
   branch = "release-1.9"
   name = "k8s.io/kube-aggregator"
+
+[[constraint]]
+  branch = "release-3.9"
+  name = "github.com/openshift/client-go"
 
 [[override]]
   name = "github.com/Azure/go-autorest"
