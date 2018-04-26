@@ -1,0 +1,9 @@
+
+Questions
+---------
+
+1) Who owns the upgrade cycle?  Who revs the operator deployment?
+2) Should an operator be watching the things it creates and immediately revert changes that diverge?  Or just do it when a change comes in to the CRD?
+3) What namespace should the operator be in?  The same as the objects it controls?
+4) What's the scope of an operator?  One thing, or the class of things?  How do you handle migration?
+  (e.g. an operator for openshift-multitenant, or all openshift-sdn plugins?  What about when we move to obn-kubernetes?)

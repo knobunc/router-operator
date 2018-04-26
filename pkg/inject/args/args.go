@@ -1,32 +1,35 @@
-
-
 package args
 
 import (
-    "time"
+	"time"
 
 	"github.com/kubernetes-sigs/kubebuilder/pkg/inject/args"
-    "k8s.io/client-go/rest"
+	"k8s.io/client-go/rest"
 
-    "github.com/knobunc/router-operator/pkg/client/clientset/versioned"
-    "github.com/knobunc/router-operator/pkg/client/informers/externalversions"
+	"github.com/knobunc/router-operator/pkg/client/clientset/versioned"
+	"github.com/knobunc/router-operator/pkg/client/informers/externalversions"
+
+	originclient "github.com/openshift/client-go/apps/clientset/versioned"
 )
 
 // InjectArgs are the arguments need to initialize controllers
 type InjectArgs struct {
-    args.InjectArgs
+	args.InjectArgs
 
-    Clientset *versioned.Clientset
-    Informers externalversions.SharedInformerFactory
+	Clientset           *versioned.Clientset
+	Informers           externalversions.SharedInformerFactory
+	OriginAppsClientset originclient.Interface
 }
-
 
 // CreateInjectArgs returns new controller args
 func CreateInjectArgs(config *rest.Config) InjectArgs {
-    cs := versioned.NewForConfigOrDie(config)
-    return InjectArgs{
-        InjectArgs: args.CreateInjectArgs(config),
-        Clientset: cs,
-        Informers: externalversions.NewSharedInformerFactory(cs, 2 * time.Minute),
-    }
+	cs := versioned.NewForConfigOrDie(config)
+	originCS := originclient.NewForConfigOrDie(config)
+
+	return InjectArgs{
+		InjectArgs:          args.CreateInjectArgs(config),
+		Clientset:           cs,
+		OriginAppsClientset: originCS,
+		Informers:           externalversions.NewSharedInformerFactory(cs, 2*time.Minute),
+	}
 }

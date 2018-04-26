@@ -1,0 +1,6 @@
+apiVersion: "router.operations.openshift.io/v1alpha1"
+kind: "TemplateRouter"
+metadata:
+  name: "whee"
+spec:
+  replicas: 1
