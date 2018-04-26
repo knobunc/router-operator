@@ -164,7 +164,24 @@ func newContainerSpec() kapi.Container {
 				Value: "VAL1",
 			},
 		},
-		ImagePullPolicy:          kapi.PullIfNotPresent,
+		ImagePullPolicy: kapi.PullIfNotPresent,
+		Ports: []kapi.ContainerPort{
+			{
+				ContainerPort: 80,
+				HostPort:      80,
+				Protocol:      "TCP",
+			},
+			{
+				ContainerPort: 443,
+				HostPort:      443,
+				Protocol:      "TCP",
+			},
+			{
+				ContainerPort: 1936,
+				HostPort:      1936,
+				Protocol:      "TCP",
+			},
+		},
 		TerminationMessagePath:   "/dev/termination-log",
 		TerminationMessagePolicy: kapi.TerminationMessageReadFile,
 		Resources: kapi.ResourceRequirements{
