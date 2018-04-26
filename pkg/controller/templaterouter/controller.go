@@ -35,13 +35,15 @@ func (bc *TemplateRouterController) Reconcile(k types.ReconcileKey) error {
 	tr, err := bc.templaterouterLister.TemplateRouters(k.Namespace).Get(k.Name)
 	if err != nil {
 		// XXX Had an error, assume it wasn't there and delete the dc
-		log.Printf("No tr, Deleting. err %#v", tr, err)
+		log.Printf("No tr, Deleting")
 
 		deleteOptions := metav1.DeleteOptions{}
-		bc.dcClient.DeploymentConfigs(k.Namespace).Delete(k.Name, &deleteOptions)
+		if err := bc.dcClient.DeploymentConfigs(k.Namespace).Delete(k.Name, &deleteOptions); err != nil {
+			log.Panicf("Couldn't delete dc %v", err)
+		}
 	} else {
 		// Create or update
-		log.Printf("Got tr %#v\n err %#v", tr, err)
+		log.Printf("Got tr, Creating or Updating")
 
 		// Pull the DC
 		dc, err := bc.dcClient.DeploymentConfigs(k.Namespace).Get(k.Name, metav1.GetOptions{})
@@ -49,22 +51,24 @@ func (bc *TemplateRouterController) Reconcile(k types.ReconcileKey) error {
 		if err != nil {
 			// Assume it doesn't exist and just make it
 			// TODO the right thing :-)
-			log.Printf("Need to make a new dc %v", err)
+			log.Printf("Need to make a new dc")
 			dc = newDeploymentConfig()
 			createDC = true
 		} else {
 			log.Printf("Read dc")
 		}
 
-		log.Printf("Start dc %#v", dc)
-
 		if updateDC(tr, dc, k) {
 			if createDC {
-				_, err := bc.dcClient.DeploymentConfigs(k.Namespace).Create(dc)
-				log.Printf("Created dc %#v\n err %#v", dc, err)
+				if _, err := bc.dcClient.DeploymentConfigs(k.Namespace).Create(dc); err != nil {
+					log.Panicf("Couldn't create dc %v", err)
+				}
+				log.Printf("Created new dc")
 			} else {
-				_, err := bc.dcClient.DeploymentConfigs(k.Namespace).Update(dc)
-				log.Printf("Updated dc %#v\n err %#v", dc, err)
+				if _, err := bc.dcClient.DeploymentConfigs(k.Namespace).Update(dc); err != nil {
+					log.Panicf("Couldn't update dc %v", err)
+				}
+				log.Printf("Updated dc")
 			}
 		}
 	}
