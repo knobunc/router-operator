@@ -134,11 +134,12 @@ func newDeploymentConfig() *appsapi.DeploymentConfig {
 					Containers: []kapi.Container{
 						newContainerSpec(),
 					},
-					RestartPolicy:   kapi.RestartPolicyAlways,
-					DNSPolicy:       kapi.DNSClusterFirst,
-					SchedulerName:   kapi.DefaultSchedulerName,
-					HostNetwork:     true, // XXX
-					SecurityContext: &kapi.PodSecurityContext{},
+					RestartPolicy:      kapi.RestartPolicyAlways,
+					DNSPolicy:          kapi.DNSClusterFirst,
+					SchedulerName:      kapi.DefaultSchedulerName,
+					HostNetwork:        true, // XXX
+					SecurityContext:    &kapi.PodSecurityContext{},
+					ServiceAccountName: "router",
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{"a": "XXX"},
