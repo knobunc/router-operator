@@ -2,8 +2,8 @@ package v1alpha1
 
 const (
 	defaultBaseImage = "openshift/origin-haproxy-router"
-	// version format is "<upstream-version>-<our-version>"
-	defaultVersion = "v3.9.0-alpha.4-0"
+	// TODO: version format is "<upstream-version>-<our-version>"
+	defaultVersion = "v3.9.0-alpha.4"
 )
 
 // SetDefaults sets the default vaules for the TemplateRouter spec and returns true if the spec was changed

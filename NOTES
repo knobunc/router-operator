@@ -7,3 +7,4 @@ Questions
 3) What namespace should the operator be in?  The same as the objects it controls?
 4) What's the scope of an operator?  One thing, or the class of things?  How do you handle migration?
   (e.g. an operator for openshift-multitenant, or all openshift-sdn plugins?  What about when we move to obn-kubernetes?)
+5) There’s a version in the sample operators, but are we supposed to use our image version and strip the -# operator version?

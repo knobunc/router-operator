@@ -29,7 +29,7 @@ import (
 
 func (bc *TemplateRouterController) Reconcile(k types.ReconcileKey) error {
 	// INSERT YOUR CODE HERE
-	log.Printf("In the Reconcile function on templaterouter.TemplateRouterController to reconcile %s.%s", k.Namespace, k.Name)
+	log.Printf("Reconciling templaterouter.TemplateRouterController %s.%s", k.Namespace, k.Name)
 
 	// Pull the template router CRD object
 	tr, err := bc.templaterouterLister.TemplateRouters(k.Namespace).Get(k.Name)
@@ -44,6 +44,7 @@ func (bc *TemplateRouterController) Reconcile(k types.ReconcileKey) error {
 	} else {
 		// Create or update
 		log.Printf("Got tr, Creating or Updating")
+		tr.SetDefaults()
 
 		// Pull the DC
 		dc, err := bc.dcClient.DeploymentConfigs(k.Namespace).Get(k.Name, metav1.GetOptions{})
@@ -59,6 +60,8 @@ func (bc *TemplateRouterController) Reconcile(k types.ReconcileKey) error {
 		}
 
 		if updateDC(tr, dc, k) {
+			// log.Printf("New dc: %#v\n\n", dc)
+			// log.Printf("New template: %#v\n\n", dc.Spec.Template)
 			if createDC {
 				if _, err := bc.dcClient.DeploymentConfigs(k.Namespace).Create(dc); err != nil {
 					log.Panicf("Couldn't create dc %v", err)
@@ -183,10 +186,12 @@ func updateDC(t *routerv1alpha1.TemplateRouter, dc *appsapi.DeploymentConfig, k 
 
 	dcm := &dc.ObjectMeta
 	if dcm.Name != k.Name {
+		log.Printf("Name changed: '%s' to '%s'", dcm.Name, k.Name)
 		dcm.Name = k.Name
 		changed = true
 	}
 	if dcm.Namespace != k.Namespace {
+		log.Printf("Namespace changed: '%s' to '%s'", dcm.Namespace, k.Namespace)
 		dcm.Namespace = k.Namespace
 		changed = true
 	}
@@ -194,11 +199,13 @@ func updateDC(t *routerv1alpha1.TemplateRouter, dc *appsapi.DeploymentConfig, k 
 	ts := &t.Spec
 	dcs := &dc.Spec
 	if dcs.Replicas != ts.Replicas {
+		log.Printf("Replicas changed: '%d' to '%d'", dcs.Replicas, ts.Replicas)
 		dcs.Replicas = ts.Replicas
 		changed = true
 	}
 
 	if len(dcs.Template.Spec.Containers) != 1 {
+		log.Printf("Container count changed: %d to 1", len(dcs.Template.Spec.Containers))
 		dcs.Template.Spec.Containers = []kapi.Container{
 			newContainerSpec(),
 		}
@@ -208,8 +215,12 @@ func updateDC(t *routerv1alpha1.TemplateRouter, dc *appsapi.DeploymentConfig, k 
 
 	image := fmt.Sprintf("%s:%s", ts.BaseImage, ts.Version)
 	if c.Image != image {
+		log.Printf("Image changed: '%s' to '%s'", c.Image, image)
 		c.Image = image
 		changed = true
 	}
+
+	dcs.Template.Spec.Containers[0] = c
+
 	return changed
 }
